@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Navbar from './components/layouts/Navbar';
 import Home from './components/pages/Home';
 import About from './components/pages/About';
@@ -9,9 +9,14 @@ import Register from './components/auth/Register';
 import Login from './components/auth/Login';
 import AlertState from './context/alert/AlertState';
 import Alerts from './components/layouts/Alerts';
+import setAuthToken from './utlis/setAuthToken';
+import PrivateRoute from './components/routing/PrivateRoute';
 import './App.css';
 // react router dom new jsx format
 // AuthState protects the routes
+if (localStorage.token) {
+  setAuthToken(localStorage.token);
+}
 const App = () => {
   return (
     <AuthState>
@@ -19,15 +24,15 @@ const App = () => {
         <AlertState>
           <Router>
             <Fragment>
-              <Navbar />
+              <Navbar />{' '}
               <div className='container'>
                 <Alerts />
-                <Routes>
-                  <Route exact path='/' element={<Home />} />
-                  <Route exact path='/about' element={<About />} />
-                  <Route exact path='/register' element={<Register />} />
-                  <Route exact path='/login' element={<Login />} />
-                </Routes>
+                <Switch>
+                  <PrivateRoute exact path='/' component={Home} />
+                  <Route exact path='/about' component={About} />
+                  <Route exact path='/register' component={Register} />
+                  <Route exact path='/login' component={Login} />
+                </Switch>
               </div>
             </Fragment>
           </Router>
